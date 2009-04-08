@@ -1,0 +1,6 @@
+<?xml version='1.0' charset="UTF-8"?>
+<foo bar="baz" xmlns="http://example.com">
+	<bar/><bar baz="123" />
+	<body>Hello World!</body>
+	<test:body xmlns:test="http://example.org/test">Test Text ....</test:body>
+</foo>
