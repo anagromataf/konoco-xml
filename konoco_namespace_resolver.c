@@ -30,23 +30,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct prefix_list {
+typedef struct _ns_prefix_list {
 	konoco_buffer prefix;
 	konoco_buffer ns;
-	struct prefix_list * next;
-};
+	struct _ns_prefix_list * next;
+} ns_prefix_list;
 
-struct resolver_handle {
-	struct resolver_handle * parent_resolver;
-	struct prefix_list * p_list;
-};
+typedef struct _resolver_handle {
+	struct _resolver_handle * parent_resolver;
+	ns_prefix_list * p_list;
+} resolver_handle;
 
-void free_prefix_list(struct prefix_list * prefix_list);
-void set_prefix_to_list(struct prefix_list * prefix_list,
+void free_prefix_list(ns_prefix_list * prefix_list);
+void set_prefix_to_list(ns_prefix_list * prefix_list,
 						konoco_buffer * prefix,
 						konoco_buffer * ns);
 konoco_buffer *
-get_namespace_from_list(struct prefix_list * prefix_list,
+get_namespace_from_list(ns_prefix_list * prefix_list,
 						konoco_buffer * prefix);
 
 #pragma mark External Funktions
@@ -54,7 +54,7 @@ get_namespace_from_list(struct prefix_list * prefix_list,
 void *
 konoco_namespace_resolver_push(void * r)
 {
-	struct resolver_handle * new_resolver = malloc(sizeof(struct resolver_handle));
+	resolver_handle * new_resolver = malloc(sizeof(resolver_handle));
 	if (!new_resolver) {
 		// could not allocate memory
 		return (0);
@@ -69,8 +69,8 @@ konoco_namespace_resolver_push(void * r)
 void *
 konoco_namespace_resolver_pop(void * r)
 {
-	struct resolver_handle * resolver = (struct resolver_handle *)r;
-	struct resolver_handle * parent = resolver->parent_resolver;
+	resolver_handle * resolver = (resolver_handle *)r;
+	resolver_handle * parent = resolver->parent_resolver;
 	
 	// free memory
 	if (resolver->p_list != 0) {
@@ -84,11 +84,11 @@ konoco_namespace_resolver_pop(void * r)
 void
 konoco_namespace_resolver_set(void * r, konoco_buffer * prefix, konoco_buffer * ns)
 {
-	struct resolver_handle * resolver = (struct resolver_handle *)r;
+	resolver_handle * resolver = (resolver_handle *)r;
 	
 	if (resolver->p_list == 0) {
 		// allocate a new struct
-		resolver->p_list = malloc(sizeof(struct prefix_list));
+		resolver->p_list = malloc(sizeof(ns_prefix_list));
 		resolver->p_list->next = 0;
 		
 		// allocate and copy prefix
@@ -106,7 +106,7 @@ konoco_namespace_resolver_set(void * r, konoco_buffer * prefix, konoco_buffer * 
 konoco_buffer *
 konoco_namespace_resolver_get(void * r, konoco_buffer * prefix)
 {
-	struct resolver_handle * resolver = (struct resolver_handle *)r;
+	resolver_handle * resolver = (resolver_handle *)r;
 	
 	konoco_buffer * result = 0;
 	if (resolver->p_list != 0) {
@@ -120,7 +120,7 @@ konoco_namespace_resolver_get(void * r, konoco_buffer * prefix)
 
 #pragma mark Prefix List Handling
 
-void free_prefix_list(struct prefix_list * prefix_list)
+void free_prefix_list(ns_prefix_list * prefix_list)
 {
 	if (prefix_list->next != 0) {
 		free_prefix_list(prefix_list->next);
@@ -130,7 +130,7 @@ void free_prefix_list(struct prefix_list * prefix_list)
 	free(prefix_list);
 }
 
-void set_prefix_to_list(struct prefix_list * prefix_list, konoco_buffer * prefix, konoco_buffer * ns)
+void set_prefix_to_list(ns_prefix_list * prefix_list, konoco_buffer * prefix, konoco_buffer * ns)
 {
 	if (konoco_buffer_eq(&prefix_list->prefix, prefix)) {
 		// same prefix
@@ -138,7 +138,7 @@ void set_prefix_to_list(struct prefix_list * prefix_list, konoco_buffer * prefix
 	} else if (prefix_list->next == 0) {
 		
 		// allocate a new struct
-		prefix_list->next = malloc(sizeof(struct prefix_list));
+		prefix_list->next = malloc(sizeof(ns_prefix_list));
 		prefix_list->next->next = 0;
 		
 		// allocate and copy prefix
@@ -154,7 +154,7 @@ void set_prefix_to_list(struct prefix_list * prefix_list, konoco_buffer * prefix
 }
 
 konoco_buffer *
-get_namespace_from_list(struct prefix_list * prefix_list, konoco_buffer * prefix)
+get_namespace_from_list(ns_prefix_list * prefix_list, konoco_buffer * prefix)
 {
 	if (konoco_buffer_eq(&prefix_list->prefix, prefix)) {
 		// same prefix
@@ -165,11 +165,5 @@ get_namespace_from_list(struct prefix_list * prefix_list, konoco_buffer * prefix
 		return (get_namespace_from_list(prefix_list->next, prefix));
 	};
 }
-
-
-
-
-
-
 
 

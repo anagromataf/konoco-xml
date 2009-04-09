@@ -31,61 +31,63 @@
 #include <string.h>
 
 // The state of the parser
-enum konoco_sax_state {
-	konoco_sax_state_not_started,
-	konoco_sax_state_stopped,
-	konoco_sax_state_error,
-	konoco_sax_state_undefined,
-	konoco_sax_state_char_data,
-	konoco_sax_state_xml_decl,
-	konoco_sax_state_begin_stag,
-	konoco_sax_state_stag,
-	konoco_sax_state_begin_etag,
-	konoco_sax_state_etag,
-	konoco_sax_state_begin_attr,
-	konoco_sax_state_attr
+enum parser_state {
+	state_not_started,
+	state_stopped,
+	state_error,
+	state_undefined,
+	state_characters,
+	state_xml_decl,
+	state_begin_stag,
+	state_stag,
+	state_begin_etag,
+	state_etag,
+	state_begin_attr,
+	state_attr
 };
 
 // Tokens, retuned by the lexer
-enum konoco_sax_token {
-	konoco_sax_token_error,
-	konoco_sax_token_eof,
+enum lexer_token {
+	token_error,
+	token_eof,
 	
 	// This token is used, if the end of the
 	// bufer was reached but the end of the
 	// token is not reached. 
-	konoco_sax_token_input_needed,
+	token_input_needed,
 	
 	// Data, not in a tag, pi, ...
-	konoco_sax_token_char_data,
+	token_characters,
 	
 	// A name for an element, pi or attribute
-	konoco_sax_token_name,
+	token_name,
 	
 	// The value of an attribute with "'" or '"'
-	konoco_sax_token_string,
+	token_string,
 	
 	// "="
-	konoco_sax_token_eq,
+	token_eq,
 	
 	// White space
-	konoco_sax_token_ws,
+	token_ws,
 	
 	// "<?xml"
-	konoco_sax_token_begin_xml_decl,
-	konoco_sax_token_end_pi,
+	token_begin_xml_decl,
+	
+	// "?>"
+	token_end_pi,
 	
 	// "<", "</", ">", "/>"
 	// The names below are not correct,
 	// but I have to use something.
-	konoco_sax_token_begin_stag,
-	konoco_sax_token_begin_etag,
-	konoco_sax_token_end_stag,
-	konoco_sax_token_end_etag
+	token_begin_stag,
+	token_begin_etag,
+	token_end_stag,
+	token_end_etag
 };
 
 // The Parser Handle
-typedef struct _konoco_sax_handle {
+typedef struct _parser_handle {
 	
 	// A pointer to the struct with the funstions,
 	// which are called if on events in the
@@ -109,8 +111,8 @@ typedef struct _konoco_sax_handle {
 	char * charset;
 	enum konoco_xml_version version;
 	
-	enum konoco_sax_state state;
-	enum konoco_sax_state sub_state;
+	enum parser_state state;
+	enum parser_state sub_state;
 	
 	int min_input_size;
 	konoco_buffer input;
@@ -118,20 +120,20 @@ typedef struct _konoco_sax_handle {
 	konoco_buffer attr_name;
 	konoco_buffer attr_value;
 	konoco_buffer lexer_value;
-} konoco_sax_handle;
+} parser_handle;
 
-enum konoco_sax_token
-get_next_token(konoco_sax_handle * parser);
+enum lexer_token
+get_next_token(parser_handle * parser);
 
-enum konoco_sax_token
-do_parsing(konoco_sax_handle * parser);
+enum lexer_token
+do_parsing(parser_handle * parser);
 
 #pragma mark External Functions (a.k.a. API)
 
 void *
 konoco_sax_create(int buffer_size, int flags)
 {
-	konoco_sax_handle * parser = malloc(sizeof(konoco_sax_handle));
+	parser_handle * parser = malloc(sizeof(parser_handle));
 	if (!parser) {
 		// Memory could not be allocated.
 		return (0);
@@ -145,8 +147,8 @@ konoco_sax_create(int buffer_size, int flags)
 		parser->buffer_size = parser->min_input_size;
 		parser->buffer_end = 0;
 		parser->position = 0;
-		parser->state = konoco_sax_state_not_started;
-		parser->sub_state = konoco_sax_state_undefined;
+		parser->state = state_not_started;
+		parser->sub_state = state_undefined;
 
 		// init the buffer for the names ...
 		// calling realloc with size 0 to get a "minimum sized object"
@@ -163,7 +165,7 @@ konoco_sax_create(int buffer_size, int flags)
 void
 konoco_sax_destroy(void * handle)
 {
-	konoco_sax_handle * parser = (konoco_sax_handle *)handle;
+	parser_handle * parser = (parser_handle *)handle;
 	
 	// Free all buffers (if allocated).
 	if (parser->buffer != 0) {
@@ -181,21 +183,21 @@ konoco_sax_destroy(void * handle)
 konoco_buffer *
 konoco_sax_get_buffer(void * p)
 {
-	konoco_sax_handle * parser = (konoco_sax_handle *)p;
+	parser_handle * parser = (parser_handle *)p;
 	return (&parser->input);
 }
 
 void
 konoco_sax_set_delegate(void * handle, konoco_sax_delegate * delegate, int flags)
 {
-	konoco_sax_handle * parser = (konoco_sax_handle *)handle;
+	parser_handle * parser = (parser_handle *)handle;
 	parser->delegate = delegate;
 }
 
 int
 konoco_sax_parse(void * handle, int length)
 {
-	konoco_sax_handle * parser = (konoco_sax_handle *)handle;
+	parser_handle * parser = (parser_handle *)handle;
 
 	parser->buffer_end += length;
 	
@@ -221,21 +223,21 @@ konoco_sax_parse(void * handle, int length)
 const char *
 konoco_sax_get_charset(void * handle)
 {
-	konoco_sax_handle * parser = (konoco_sax_handle *)handle;
+	parser_handle * parser = (parser_handle *)handle;
 	return (parser->charset);
 }
 
 enum konoco_xml_version
 konoco_sax_get_version(void * handle)
 {
-	konoco_sax_handle * parser = (konoco_sax_handle *)handle;
+	parser_handle * parser = (parser_handle *)handle;
 	return (parser->version);
 }
 
 #pragma mark Functions to call the Delegate
 
 void
-call_start_document(konoco_sax_handle * parser)
+call_start_document(parser_handle * parser)
 {
 	if (parser->delegate && parser->delegate->start_document) {
 		(parser->delegate->start_document)(parser,
@@ -244,7 +246,7 @@ call_start_document(konoco_sax_handle * parser)
 }
 
 void
-call_end_document(konoco_sax_handle * parser)
+call_end_document(parser_handle * parser)
 {
 	if (parser->delegate && parser->delegate->end_document) {
 		(parser->delegate->end_document)(parser,
@@ -253,7 +255,7 @@ call_end_document(konoco_sax_handle * parser)
 }
 
 void
-call_start_element(konoco_sax_handle * parser)
+call_start_element(parser_handle * parser)
 {
 	if (parser->delegate && parser->delegate->start_element) {
 		(parser->delegate->start_element)(parser,
@@ -263,7 +265,7 @@ call_start_element(konoco_sax_handle * parser)
 }
 
 void
-call_end_element(konoco_sax_handle * parser)
+call_end_element(parser_handle * parser)
 {
 	if (parser->delegate && parser->delegate->end_element) {
 		(parser->delegate->end_element)(parser,
@@ -273,7 +275,7 @@ call_end_element(konoco_sax_handle * parser)
 }
 
 void
-call_attribute(konoco_sax_handle * parser)
+call_attribute(parser_handle * parser)
 {
 	if (parser->delegate && parser->delegate->attribute) {
 		(parser->delegate->attribute)(parser,
@@ -284,7 +286,7 @@ call_attribute(konoco_sax_handle * parser)
 }
 
 void
-call_characters(konoco_sax_handle * parser)
+call_characters(parser_handle * parser)
 {
 	if (parser->delegate && parser->delegate->characters) {
 		(parser->delegate->characters)(parser,
@@ -294,7 +296,7 @@ call_characters(konoco_sax_handle * parser)
 }
 
 void
-call_error(konoco_sax_handle * parser, const char * msg)
+call_error(parser_handle * parser, const char * msg)
 {
 	if (parser->delegate && parser->delegate->error) {
 		(parser->delegate->error)(parser, parser->delegate->data, msg);
@@ -304,25 +306,26 @@ call_error(konoco_sax_handle * parser, const char * msg)
 #pragma mark Parameter & Co
 
 void
-set_element_name(konoco_sax_handle * parser)
+set_element_name(parser_handle * parser)
 {
 	konoco_buffer_cpy(&parser->element_name, &parser->lexer_value);
 }
 
 void
-set_attr_name(konoco_sax_handle * parser)
+set_attr_name(parser_handle * parser)
 {
 	konoco_buffer_cpy(&parser->attr_name, &parser->lexer_value);
 }
 
 void
-set_attr_value(konoco_sax_handle * parser)
+set_attr_value(parser_handle * parser)
 {
 	konoco_buffer_cpy(&parser->attr_value, &parser->lexer_value);
 }
 
 int
-set_parser_parameter(konoco_sax_handle * parser) {
+set_parser_parameter(parser_handle * parser)
+{
 	if (konoco_buffer_eq_str(&parser->attr_name, "version")) {
 		// set version
 		if (konoco_buffer_eq_str(&parser->attr_value, "1.0")) {
@@ -373,7 +376,7 @@ is_name_char(unsigned char c)
 }
 
 int
-find_string_end(konoco_sax_handle * parser, int position, char delimiter)
+find_string_end(parser_handle * parser, int position, char delimiter)
 {
 	while (position < parser->buffer_end) {
 		char c = parser->buffer[position];
@@ -391,7 +394,7 @@ find_string_end(konoco_sax_handle * parser, int position, char delimiter)
 }
 
 int
-find_name_end(konoco_sax_handle * parser, int position)
+find_name_end(parser_handle * parser, int position)
 {
 	while (position < parser->buffer_end) {
 		char c = parser->buffer[position];
@@ -405,14 +408,14 @@ find_name_end(konoco_sax_handle * parser, int position)
 	return (-1);
 }
 
-enum konoco_sax_token
-get_next_token(konoco_sax_handle * parser)
+enum lexer_token
+get_next_token(parser_handle * parser)
 {
 	if (parser->position >= parser->buffer_end)
-		return (konoco_sax_token_input_needed);
+		return (token_input_needed);
 	
 	switch (parser->state) {
-		case konoco_sax_state_char_data:
+		case state_characters:
 			// Set the begin of the lexem to
 			// the postion of the parser.
 			parser->lexer_value.length = 0;
@@ -433,7 +436,7 @@ get_next_token(konoco_sax_handle * parser)
 			// If the length of the char data section is 0,
 			// we weren't able to consume any chars.
 			if (parser->lexer_value.length > 0) {
-				return (konoco_sax_token_char_data);
+				return (token_characters);
 			};
 			break;
 	};
@@ -443,63 +446,63 @@ get_next_token(konoco_sax_handle * parser)
 	
 	switch (c) {
 		case '\0':
-			return (konoco_sax_token_eof);
+			return (token_eof);
 			
 		case '<':
 		{
 			// We need at lest one more char, to decide
 			// which token we have.
 			if (parser->position + 1 >= parser->buffer_end)
-				return (konoco_sax_token_input_needed);
+				return (token_input_needed);
 			c = parser->buffer[++parser->position];
 			switch (c) {
 				case '?':
 					// We need at least 3 more chars to
 					// decide if we are in the prolog ("<?xml ...").
 					if (parser->position + 3 >= parser->buffer_end)
-						return (konoco_sax_token_input_needed);
+						return (token_input_needed);
 					c = parser->buffer[parser->position + 1];
 					if (c != 'X' && c != 'x') {
 						parser->position = parser->position + 1;
-						return (konoco_sax_token_error);
+						return (token_error);
 					};
 					c = parser->buffer[parser->position + 2];
 					if (c != 'M' && c != 'm') {
 						parser->position = parser->position + 2;
-						return (konoco_sax_token_error);
+						return (token_error);
 					};
 					c = parser->buffer[parser->position + 3];
 					if (c != 'L' && c != 'l') {
 						parser->position = parser->position + 3;
-						return (konoco_sax_token_error);
+						return (token_error);
 					};
 					parser->position = parser->position + 4;
-					return (konoco_sax_token_begin_xml_decl);
+					return (token_begin_xml_decl);
 				case '/':
 					parser->position++;
-					return (konoco_sax_token_begin_etag);
+					return (token_begin_etag);
 				default:
-					return (konoco_sax_token_begin_stag);
+					return (token_begin_stag);
 			};
 		};
 			
 		case '>':
 			parser->position++;
-			return (konoco_sax_token_end_stag);
+			return (token_end_stag);
 			
 		case '/':
 		{
 			// We need at lest one more char, to decide
 			// which token we have.
 			if (parser->position + 1 >= parser->buffer_end)
-				return (konoco_sax_token_input_needed);
+				return (token_input_needed);
 			c = parser->buffer[++parser->position];
 			if (c == '>') {
 				parser->position++;
-				return (konoco_sax_token_end_etag);
+				return (token_end_etag);
 			} else {
 				parser->position;
-				return (konoco_sax_token_error);
+				return (token_error);
 			};
 		};
 			
@@ -508,19 +511,19 @@ get_next_token(konoco_sax_handle * parser)
 			// We need at lest one more char, to decide
 			// which token we have.
 			if (parser->position + 1 >= parser->buffer_end)
-				return (konoco_sax_token_input_needed);
+				return (token_input_needed);
 			c = parser->buffer[++parser->position];
 			if (c == '>') {
 				parser->position++;
-				return (konoco_sax_token_end_pi);
+				return (token_end_pi);
 			} else {
-				return (konoco_sax_token_error);
+				return (token_error);
 			};
 		};
 			
 		case '=':
 			parser->position++;
-			return (konoco_sax_token_eq);
+			return (token_eq);
 			
 		case '\'':
 		case '"':
@@ -530,16 +533,16 @@ get_next_token(konoco_sax_handle * parser)
 			switch (pos) {
 				case -1:
 					// More input needed
-					return (konoco_sax_token_input_needed);
+					return (token_input_needed);
 				case -2:
 					// Not allowd char
 					parser->position = pos;
-					return (konoco_sax_token_error);
+					return (token_error);
 				default:
 					parser->lexer_value.data = parser->buffer + parser->position + 1;
 					parser->lexer_value.length = pos - parser->position - 1;
 					parser->position = ++pos;
-					return (konoco_sax_token_string);
+					return (token_string);
 			};
 		};
 			
@@ -549,7 +552,7 @@ get_next_token(konoco_sax_handle * parser)
 		case 0xA:
 			// White space
 			parser->position++;
-			return (konoco_sax_token_ws);
+			return (token_ws);
 			
 		default:
 			// Test for the rest ...
@@ -558,241 +561,241 @@ get_next_token(konoco_sax_handle * parser)
 				switch (pos) {
 					case -1:
 						// More input needed
-						return (konoco_sax_token_input_needed);
+						return (token_input_needed);
 					case -2:
 						// Not allowd char
 						parser->position = pos;
-						return (konoco_sax_token_error);
+						return (token_error);
 					default:
 						parser->lexer_value.data = parser->buffer + parser->position;
 						parser->lexer_value.length = pos - parser->position;
 						parser->position = pos;
-						return (konoco_sax_token_name);
+						return (token_name);
 				};
 			};
 	};
 	
-	return (konoco_sax_token_error);
+	return (token_error);
 }
 
 #pragma mark Parser
 
 
-enum konoco_sax_token
-do_parsing(konoco_sax_handle * parser)
+enum lexer_token
+do_parsing(parser_handle * parser)
 {
-	enum konoco_sax_token token;
+	enum lexer_token token;
 	do {
 		token = get_next_token(parser);
 		
-		if (token == konoco_sax_token_input_needed) {
+		if (token == token_input_needed) {
 			return (token);
 		};
 		
 		switch (parser->state) {
-			case konoco_sax_state_not_started:
+			case state_not_started:
 			{
 				// If we start the parser, we want to begin with
 				// the xml delc.
 				switch (token) {
-					case konoco_sax_token_begin_xml_decl:
-						parser->state = konoco_sax_state_xml_decl;
+					case token_begin_xml_decl:
+						parser->state = state_xml_decl;
 						continue;
 					default:
-						parser->state = konoco_sax_state_error;
+						parser->state = state_error;
 						call_error(parser, "We have to start with '<?xml'.");
 						return (token);
 				};
 			};
 			
-			case konoco_sax_state_xml_decl:
+			case state_xml_decl:
 			{
 				// We are in the xml decl. No we have to look
 				// for the version and the charset.
 				
 				switch (token) {
-					case konoco_sax_token_name:
-						if (parser->sub_state != konoco_sax_state_undefined) {
+					case token_name:
+						if (parser->sub_state != state_undefined) {
 							// If we start with an attribute delc. We have to
 							// to be in the sub_state undefined.
-							parser->state = konoco_sax_state_error;
+							parser->state = state_error;
 							call_error(parser, "Syntax error ...");
 							return (token);							
 						};
 						set_attr_name(parser);
-						parser->sub_state = konoco_sax_state_begin_attr;
+						parser->sub_state = state_begin_attr;
 						continue;
-					case konoco_sax_token_eq:
-						if (parser->sub_state != konoco_sax_state_begin_attr) {
-							parser->state = konoco_sax_state_error;
+					case token_eq:
+						if (parser->sub_state != state_begin_attr) {
+							parser->state = state_error;
 							call_error(parser, "Syntax error ...");
 							return (token);
 						};
-						parser->sub_state = konoco_sax_state_attr;
+						parser->sub_state = state_attr;
 						continue;
-					case konoco_sax_token_string:
-						if (parser->sub_state != konoco_sax_state_attr) {
-							parser->state = konoco_sax_state_error;
+					case token_string:
+						if (parser->sub_state != state_attr) {
+							parser->state = state_error;
 							call_error(parser, "Syntax error ...");
 							return (token);							
 						};
 						set_attr_value(parser);
-						parser->sub_state = konoco_sax_state_undefined;
+						parser->sub_state = state_undefined;
 						if (set_parser_parameter(parser) == 0) {
 							continue;
 						} else {
 							return (token);
 						};
-					case konoco_sax_token_ws:
+					case token_ws:
 						continue;
-					case konoco_sax_token_end_pi:
+					case token_end_pi:
 						call_start_document(parser);
-						parser->state = konoco_sax_state_char_data;
+						parser->state = state_characters;
 						continue;
 					default:
-						parser->state = konoco_sax_state_error;
+						parser->state = state_error;
 						call_error(parser, "Syntax error ...");
 						return (token);
 				};
 			};
 			
-			case konoco_sax_state_char_data:
+			case state_characters:
 			{
 				switch (token) {
-					case konoco_sax_token_char_data:
+					case token_characters:
 						call_characters(parser);
 						continue;
-					case konoco_sax_token_begin_stag:
-						parser->state = konoco_sax_state_begin_stag;
+					case token_begin_stag:
+						parser->state = state_begin_stag;
 						continue;
-					case konoco_sax_token_begin_etag:
-						parser->state = konoco_sax_state_begin_etag;
+					case token_begin_etag:
+						parser->state = state_begin_etag;
 						continue;
-					case konoco_sax_token_eof:
-						parser->state = konoco_sax_state_stopped;
+					case token_eof:
+						parser->state = state_stopped;
 						call_end_document(parser);
 						return (token);
 					default:
-						parser->state = konoco_sax_state_error;
+						parser->state = state_error;
 						call_error(parser, "Syntax error ...");
 						return (token);
 				};
 			};
 			
-			case konoco_sax_state_begin_stag:
+			case state_begin_stag:
 			{
 				switch (token) {
-					case konoco_sax_token_name:
+					case token_name:
 						set_element_name(parser);
-						parser->state = konoco_sax_state_stag;
-						parser->sub_state = konoco_sax_state_undefined;
+						parser->state = state_stag;
+						parser->sub_state = state_undefined;
 						call_start_element(parser);
 						continue;
 					default:
-						parser->state = konoco_sax_state_error;
+						parser->state = state_error;
 						call_error(parser, "Syntax error: We have to start a tag with a name.");
 						return (token);
 				};
 			};
 			
-			case konoco_sax_state_begin_etag:
+			case state_begin_etag:
 			{
 				switch (token) {
-					case konoco_sax_token_name:
+					case token_name:
 						set_element_name(parser);
-						parser->state = konoco_sax_state_etag;
-						parser->sub_state = konoco_sax_state_undefined;
+						parser->state = state_etag;
+						parser->sub_state = state_undefined;
 						call_end_element(parser);
 						continue;
 					default:
-						parser->state = konoco_sax_state_error;
+						parser->state = state_error;
 						call_error(parser, "Syntax error: We have to start a tag with a name.");
 						return (token);
 				};
 			};
 			
-			case konoco_sax_state_stag:
+			case state_stag:
 			{
 				switch (token) {
-					case konoco_sax_token_end_stag:
-						if (parser->sub_state != konoco_sax_state_undefined) {
-							parser->state = konoco_sax_state_error;
+					case token_end_stag:
+						if (parser->sub_state != state_undefined) {
+							parser->state = state_error;
 							call_error(parser, "Syntax error ...");
 							return (token);							
 						};
-						parser->state = konoco_sax_state_char_data;
+						parser->state = state_characters;
 						continue;
-					case konoco_sax_token_end_etag:
-						if (parser->sub_state != konoco_sax_state_undefined) {
-							parser->state = konoco_sax_state_error;
+					case token_end_etag:
+						if (parser->sub_state != state_undefined) {
+							parser->state = state_error;
 							call_error(parser, "Syntax error ...");
 							return (token);							
 						};
 						call_end_element(parser);
-						parser->state = konoco_sax_state_char_data;
+						parser->state = state_characters;
 						continue;
-					case konoco_sax_token_name:
-						if (parser->sub_state != konoco_sax_state_undefined) {
+					case token_name:
+						if (parser->sub_state != state_undefined) {
 							// If we start with an attribute delc. We have to
 							// to be in the sub_state undefined.
-							parser->state = konoco_sax_state_error;
+							parser->state = state_error;
 							call_error(parser, "Syntax error ...");
 							return (token);							
 						};
 						set_attr_name(parser);
-						parser->sub_state = konoco_sax_state_begin_attr;
+						parser->sub_state = state_begin_attr;
 						continue;
-					case konoco_sax_token_eq:
-						if (parser->sub_state != konoco_sax_state_begin_attr) {
-							parser->state = konoco_sax_state_error;
+					case token_eq:
+						if (parser->sub_state != state_begin_attr) {
+							parser->state = state_error;
 							call_error(parser, "Syntax error ...");
 							return (token);
 						};
-						parser->sub_state = konoco_sax_state_attr;
+						parser->sub_state = state_attr;
 						continue;
-					case konoco_sax_token_string:
-						if (parser->sub_state != konoco_sax_state_attr) {
-							parser->state = konoco_sax_state_error;
+					case token_string:
+						if (parser->sub_state != state_attr) {
+							parser->state = state_error;
 							call_error(parser, "Syntax error ...");
 							return (token);							
 						};
 						set_attr_value(parser);
-						parser->sub_state = konoco_sax_state_undefined;
+						parser->sub_state = state_undefined;
 						call_attribute(parser);
 						continue;
-					case konoco_sax_token_ws:
+					case token_ws:
 						continue;
 					default:
-						parser->state = konoco_sax_state_error;
+						parser->state = state_error;
 						call_error(parser, "Syntax error ...");
 						return (token);
 				};
 				
 			};
 			
-			case konoco_sax_state_etag:
+			case state_etag:
 			{
 				switch (token) {
-					case konoco_sax_token_end_stag:
-						if (parser->sub_state != konoco_sax_state_undefined) {
-							parser->state = konoco_sax_state_error;
+					case token_end_stag:
+						if (parser->sub_state != state_undefined) {
+							parser->state = state_error;
 							call_error(parser, "Syntax error ...");
 							return (token);							
 						};
-						parser->state = konoco_sax_state_char_data;
+						parser->state = state_characters;
 						continue;
-					case konoco_sax_token_ws:
+					case token_ws:
 						continue;
 					default:
-						parser->state = konoco_sax_state_error;
+						parser->state = state_error;
 						call_error(parser, "Syntax error ...");
 						return (token);
 				};
 			};
 		};
-	} while (token != konoco_sax_token_error ||
-			 token != konoco_sax_token_input_needed ||
-			 token != konoco_sax_token_eof);
+	} while (token != token_error ||
+			 token != token_input_needed ||
+			 token != token_eof);
 	
 	return (token);
 }
