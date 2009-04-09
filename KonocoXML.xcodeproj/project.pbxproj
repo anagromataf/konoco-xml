@@ -10,6 +10,13 @@
 		8DD76F9A0486AA7600D96B5E /* KonocoXML.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* KonocoXML.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		8DD76F9F0486AA7600D96B5E /* KonocoXML.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* KonocoXML.1 */; };
+		F64057390F8DFFE600586FB7 /* konoco_sax_handle.h in Headers */ = {isa = PBXBuildFile; fileRef = F64057380F8DFFE600586FB7 /* konoco_sax_handle.h */; };
+		F640573D0F8E003300586FB7 /* konoco_sax_lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = F640573B0F8E003300586FB7 /* konoco_sax_lexer.c */; };
+		F640573E0F8E003300586FB7 /* konoco_sax_lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = F640573C0F8E003300586FB7 /* konoco_sax_lexer.h */; };
+		F640574D0F8E012400586FB7 /* konoco_sax_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = F640574B0F8E012400586FB7 /* konoco_sax_parser.c */; };
+		F640574E0F8E012400586FB7 /* konoco_sax_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = F640574C0F8E012400586FB7 /* konoco_sax_parser.h */; };
+		F64057590F8E020C00586FB7 /* konoco_sax_delegate.h in Headers */ = {isa = PBXBuildFile; fileRef = F64057570F8E020C00586FB7 /* konoco_sax_delegate.h */; };
+		F640575A0F8E020C00586FB7 /* konoco_sax_delegate.c in Sources */ = {isa = PBXBuildFile; fileRef = F64057580F8E020C00586FB7 /* konoco_sax_delegate.c */; };
 		F6E265B90F8B53B6008F29B7 /* ResolverTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E265B80F8B53B6008F29B7 /* ResolverTest.m */; };
 		F6E265F10F8B57E3008F29B7 /* konoco_namespace_resolver.c in Sources */ = {isa = PBXBuildFile; fileRef = F6E265EC0F8B57E3008F29B7 /* konoco_namespace_resolver.c */; };
 		F6E265F20F8B57E3008F29B7 /* konoco_namespace_resolver.h in Headers */ = {isa = PBXBuildFile; fileRef = F6E265ED0F8B57E3008F29B7 /* konoco_namespace_resolver.h */; };
@@ -66,7 +73,13 @@
 		32A70AAB03705E1F00C91783 /* KonocoXML_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KonocoXML_Prefix.pch; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* KonocoXML */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = KonocoXML; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6859EA3029092ED04C91782 /* KonocoXML.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = KonocoXML.1; sourceTree = "<group>"; };
-		F64056560F8D4DE800586FB7 /* tmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tmp.c; sourceTree = "<group>"; };
+		F64057380F8DFFE600586FB7 /* konoco_sax_handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = konoco_sax_handle.h; sourceTree = "<group>"; };
+		F640573B0F8E003300586FB7 /* konoco_sax_lexer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = konoco_sax_lexer.c; sourceTree = "<group>"; };
+		F640573C0F8E003300586FB7 /* konoco_sax_lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = konoco_sax_lexer.h; sourceTree = "<group>"; };
+		F640574B0F8E012400586FB7 /* konoco_sax_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = konoco_sax_parser.c; sourceTree = "<group>"; };
+		F640574C0F8E012400586FB7 /* konoco_sax_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = konoco_sax_parser.h; sourceTree = "<group>"; };
+		F64057570F8E020C00586FB7 /* konoco_sax_delegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = konoco_sax_delegate.h; sourceTree = "<group>"; };
+		F64057580F8E020C00586FB7 /* konoco_sax_delegate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = konoco_sax_delegate.c; sourceTree = "<group>"; };
 		F6E265A70F8B531F008F29B7 /* Unittest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Unittest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6E265A80F8B531F008F29B7 /* Unittest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Unittest-Info.plist"; sourceTree = "<group>"; };
 		F6E265B70F8B53B6008F29B7 /* ResolverTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResolverTest.h; sourceTree = "<group>"; };
@@ -130,9 +143,11 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				F64056560F8D4DE800586FB7 /* tmp.c */,
 				F6E2671E0F8BA8EB008F29B7 /* konoco_buffer.c */,
 				F6E265EE0F8B57E3008F29B7 /* konoco_sax.c */,
+				F640573B0F8E003300586FB7 /* konoco_sax_lexer.c */,
+				F640574B0F8E012400586FB7 /* konoco_sax_parser.c */,
+				F64057580F8E020C00586FB7 /* konoco_sax_delegate.c */,
 				F6E265EC0F8B57E3008F29B7 /* konoco_namespace_resolver.c */,
 			);
 			name = Source;
@@ -181,6 +196,10 @@
 				F6E2667C0F8B84B1008F29B7 /* konoco_buffer.h */,
 				F6E265F00F8B57E3008F29B7 /* konoco_xml.h */,
 				F6E265EF0F8B57E3008F29B7 /* konoco_sax.h */,
+				F64057380F8DFFE600586FB7 /* konoco_sax_handle.h */,
+				F640573C0F8E003300586FB7 /* konoco_sax_lexer.h */,
+				F640574C0F8E012400586FB7 /* konoco_sax_parser.h */,
+				F64057570F8E020C00586FB7 /* konoco_sax_delegate.h */,
 				F6E265ED0F8B57E3008F29B7 /* konoco_namespace_resolver.h */,
 			);
 			name = Headers;
@@ -215,6 +234,10 @@
 				F6E265F40F8B57E3008F29B7 /* konoco_sax.h in Headers */,
 				F6E265F50F8B57E3008F29B7 /* konoco_xml.h in Headers */,
 				F6E2667E0F8B84B1008F29B7 /* konoco_buffer.h in Headers */,
+				F64057390F8DFFE600586FB7 /* konoco_sax_handle.h in Headers */,
+				F640573E0F8E003300586FB7 /* konoco_sax_lexer.h in Headers */,
+				F640574E0F8E012400586FB7 /* konoco_sax_parser.h in Headers */,
+				F64057590F8E020C00586FB7 /* konoco_sax_delegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,6 +370,9 @@
 				F6E2671F0F8BA8EB008F29B7 /* konoco_buffer.c in Sources */,
 				F6E265F10F8B57E3008F29B7 /* konoco_namespace_resolver.c in Sources */,
 				F6E265F30F8B57E3008F29B7 /* konoco_sax.c in Sources */,
+				F640573D0F8E003300586FB7 /* konoco_sax_lexer.c in Sources */,
+				F640574D0F8E012400586FB7 /* konoco_sax_parser.c in Sources */,
+				F640575A0F8E020C00586FB7 /* konoco_sax_delegate.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
