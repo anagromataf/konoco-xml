@@ -77,6 +77,15 @@ konoco_buffer_cpy(konoco_buffer * buffer, const konoco_buffer * orig)
 	memcpy(buffer->data, orig->data, orig->length);
 }
 
+void
+konoco_buffer_init_cpy(konoco_buffer * buffer, const konoco_buffer * orig)
+{
+	buffer->data = malloc(orig->length);
+	buffer->_size = orig->length;
+	buffer->length = orig->length;
+	memcpy(buffer->data, orig->data, orig->length);
+}
+
 int
 konoco_buffer_eq(const konoco_buffer * a, const konoco_buffer * b)
 {

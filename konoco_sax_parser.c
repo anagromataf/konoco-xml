@@ -203,6 +203,7 @@ do_parsing(parser_handle * parser)
 							call_error(parser, "Syntax error ...");
 							return (token);							
 						};
+						_flush(parser);
 						parser->state = state_characters;
 						continue;
 					case token_end_etag:
@@ -211,6 +212,7 @@ do_parsing(parser_handle * parser)
 							call_error(parser, "Syntax error ...");
 							return (token);							
 						};
+						_flush(parser);
 						call_end_element(parser);
 						parser->state = state_characters;
 						continue;

@@ -45,7 +45,9 @@ typedef struct _konoco_sax_delegate {
 	void (*characters)(void * parser, void * data, konoco_buffer * text);
 	void (*error)(void * parser, void * data, const char * msg);
 	
+	// internal fields & functions
 	struct _konoco_sax_delegate * _parent;
+	void (*_flush)(void * parser, void * data);
 } konoco_sax_delegate;
 
 void *

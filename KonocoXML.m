@@ -66,25 +66,46 @@ delegate_characters(void * parser, void * data, konoco_buffer * text)
 void
 delegate_start_element(void * parser, void * data, konoco_buffer * name, konoco_buffer * namespace)
 {
-	printf("Start Element: '%.*s'\n",
+	printf("Start Element: '%.*s'",
 		   name->length,
 		   name->data);
+	if (namespace) {
+		printf(" '%.*s'\n",
+			   namespace->length,
+			   namespace->data);
+	} else {
+		printf("\n");
+	};
 }
 
 void
 delegate_end_element(void * parser, void * data, konoco_buffer * name, konoco_buffer * namespace)
 {
-	printf("End Element: '%.*s'\n",
+	printf("End Element: '%.*s'",
 		   name->length,
 		   name->data);
+	if (namespace) {
+		printf(" '%.*s'\n",
+			   namespace->length,
+			   namespace->data);
+	} else {
+		printf("\n");
+	};
 }
 
 void
 delegate_attribute(void * parser, void * data, konoco_buffer * name, konoco_buffer * namespace, konoco_buffer * value)
 {
-	printf("Attribute: '%.*s'='%.*s'\n",
+	printf("Attribute: '%.*s'='%.*s'",
 		   name->length, name->data,
 		   value->length, value->data);
+	if (namespace) {
+		printf(" '%.*s'\n",
+			   namespace->length,
+			   namespace->data);
+	} else {
+		printf("\n");
+	};
 }
 
 void

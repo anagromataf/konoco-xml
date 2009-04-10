@@ -49,6 +49,9 @@ konoco_buffer_strcpy(konoco_buffer * buffer, const char * str);
 void
 konoco_buffer_cpy(konoco_buffer * buffer, const konoco_buffer * orig);
 
+void
+konoco_buffer_init_cpy(konoco_buffer * buffer, const konoco_buffer * orig);
+
 int
 konoco_buffer_eq(const konoco_buffer * a, const konoco_buffer * b);
 

@@ -21,4 +21,9 @@ void call_attribute(parser_handle * parser);
 void call_characters(parser_handle * parser);
 void call_error(parser_handle * parser, const char * msg);
 
+// function is used by the ns delegate
+// it informs the delegate, that no more attributes
+// are comming
+void _flush(parser_handle * parser);
+
 #endif //_konoco_sax_delegate_h_

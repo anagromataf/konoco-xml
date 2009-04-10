@@ -78,3 +78,12 @@ call_error(parser_handle * parser, const char * msg)
 		(parser->delegate->error)(parser, parser->delegate->data, msg);
 	};
 }
+
+void
+_flush(parser_handle * parser)
+{
+	if (parser->delegate && parser->delegate->_flush) {
+		(parser->delegate->_flush)(parser, parser->delegate->data);
+	};
+}
+

@@ -28,6 +28,7 @@
 #include "konoco_sax.h"
 #include "konoco_sax_handle.h"
 #include "konoco_sax_lexer.h"
+#include "konoco_sax_namespace_handler.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -65,6 +66,12 @@ konoco_sax_create(int buffer_size, int flags)
 		konoco_buffer_init(&parser->attr_name);
 		konoco_buffer_init(&parser->attr_value);
 		
+		// set the point to the ns resolver to NULL
+		parser->ns_resolver = 0;
+
+		konoco_buffer_init(&parser->ns_delegate_data.element_prefix);
+		konoco_buffer_init(&parser->ns_delegate_data.element_name);
+		
 		return (parser);
 	};
 }
@@ -83,6 +90,9 @@ konoco_sax_destroy(void * handle)
 	konoco_buffer_free(&parser->attr_name);
 	konoco_buffer_free(&parser->attr_value);
 	
+	konoco_buffer_free(&parser->ns_delegate_data.element_prefix);
+	konoco_buffer_free(&parser->ns_delegate_data.element_name);
+	
 	// Free the parser.
 	free (parser);
 }
@@ -99,6 +109,13 @@ konoco_sax_set_delegate(void * handle, konoco_sax_delegate * delegate, int flags
 {
 	parser_handle * parser = (parser_handle *)handle;
 	parser->delegate = delegate;
+	// make sure that the pointer to the internal
+	// function '_flush' is NULL
+	parser->delegate->_flush = 0;
+	if ((flags & RESOLVE_NAMESPACE) == RESOLVE_NAMESPACE) {
+		// inject the delegate to hadle namespaces
+		inject_namespace_delegate(parser);
+	};
 }
 
 int

@@ -28,6 +28,10 @@
 #ifndef _konoco_sax_handle_h_
 #define _konoco_sax_handle_h_
 
+#include "konoco_sax.h"
+#include "konoco_xml.h"
+#include "konoco_buffer.h"
+
 // The state of the parser
 enum parser_state {
 	state_not_started,
@@ -43,6 +47,21 @@ enum parser_state {
 	state_begin_attr,
 	state_attr
 };
+
+typedef struct _attribute_list {
+	konoco_buffer prefix;
+	konoco_buffer name;
+	konoco_buffer value;
+	struct _attribute_list * next;
+} attribute_list;
+
+typedef struct _ns_delegate_data {
+	konoco_sax_delegate * orig_delegate;
+	
+	konoco_buffer element_prefix;
+	konoco_buffer element_name;
+	attribute_list * attributes;
+} ns_delegate_data;
 
 // The Parser Handle
 typedef struct _parser_handle {
@@ -78,6 +97,12 @@ typedef struct _parser_handle {
 	konoco_buffer attr_name;
 	konoco_buffer attr_value;
 	konoco_buffer lexer_value;
+	
+	// ns resolver
+	void * ns_resolver;
+	konoco_sax_delegate ns_delegate;
+	ns_delegate_data ns_delegate_data;
+	
 } parser_handle;
 
 #endif // _konoco_sax_handle_h_
