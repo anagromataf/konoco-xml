@@ -43,6 +43,7 @@ typedef struct _konoco_sax_delegate {
 	void (*end_element)(void * parser, void * data, konoco_buffer * name, konoco_buffer * namespace);
 	void (*attribute)(void * parser, void * data, konoco_buffer * name, konoco_buffer * namespace, konoco_buffer * value);
 	void (*characters)(void * parser, void * data, konoco_buffer * text);
+	void (*xmlns)(void * parser, void * data, konoco_buffer * prefix, konoco_buffer * namespace);
 	void (*error)(void * parser, void * data, const char * msg);
 	
 	// internal fields & functions

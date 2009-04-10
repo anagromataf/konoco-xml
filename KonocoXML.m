@@ -109,6 +109,14 @@ delegate_attribute(void * parser, void * data, konoco_buffer * name, konoco_buff
 }
 
 void
+delegate_xmlns(void * parser, void * data, konoco_buffer * prefix, konoco_buffer * namespace)
+{
+	printf("Prefix mapping: '%.*s' '%.*s'\n",
+		   prefix->length, prefix->data,
+		   namespace->length, namespace->data);
+}
+
+void
 delegate_error(void * parser, void * data, const char * error)
 {
 	*(int *)data = 0;
@@ -129,6 +137,7 @@ int main (int argc, const char * argv[]) {
 		delegate.end_element = &delegate_end_element;
 		delegate.attribute = &delegate_attribute;
 		delegate.characters = &delegate_characters;
+		delegate.xmlns = &delegate_xmlns;
 		delegate.error = &delegate_error;
 		
 		void * parser = konoco_sax_create(1024, 0);

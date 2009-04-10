@@ -204,13 +204,20 @@ void
 ns_delegate_attribute(void * p, void * data, konoco_buffer * name, konoco_buffer * namespace, konoco_buffer * value)
 {
 	parser_handle * parser = (parser_handle *)p;
-
+	ns_delegate_data * ns_data = (ns_delegate_data *)data;
+	
 	qname qname;
 	
 	if (split_prefix(&qname, name)){
 		if (konoco_buffer_eq_str(&qname.prefix, "xmlns")) {
 			assert(parser->ns_resolver);
 			konoco_namespace_resolver_set(parser->ns_resolver, &qname.name, value);
+			if (ns_data->orig_delegate->xmlns) {
+				(ns_data->orig_delegate->xmlns)(parser,
+												ns_data->orig_delegate->data,
+												&qname.name,
+												value);
+			};
 		} else {
 			append_attribute(parser, &qname.prefix, &qname.name, value);
 		}
@@ -218,6 +225,12 @@ ns_delegate_attribute(void * p, void * data, konoco_buffer * name, konoco_buffer
 		if (konoco_buffer_eq_str(&qname.name, "xmlns")) {
 			assert(parser->ns_resolver);
 			konoco_namespace_resolver_set(parser->ns_resolver, &qname.prefix, value);
+			if (ns_data->orig_delegate->xmlns) {
+				(ns_data->orig_delegate->xmlns)(parser,
+												ns_data->orig_delegate->data,
+												&qname.prefix,
+												value);
+			};
 		} else {
 			append_attribute(parser, &qname.prefix, &qname.name, value);
 		};

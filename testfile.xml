@@ -2,5 +2,8 @@
 <foo bar="baz" xmlns="http://example.com">
 	<bar/><bar xmlns:a="uri:xyz" baz="123" a:b="123"/>
 	<body>Hello World!</body>
+	<foo xmlns:a="a" a="1"
+		 xmlns:b="b" b= "2"
+		 xmlns:c="c" c ="3" />
 	<test:body xmlns:test="http://example.org/test">Test Text ....</test:body>
 </foo>
