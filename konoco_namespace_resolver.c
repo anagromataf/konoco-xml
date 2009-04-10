@@ -111,7 +111,9 @@ konoco_namespace_resolver_get(void * r, konoco_buffer * prefix)
 	konoco_buffer * result = 0;
 	if (resolver->p_list != 0) {
 		result = get_namespace_from_list(resolver->p_list, prefix);
-	} else if (result == 0 && resolver->parent_resolver != 0) {
+	};
+	
+	if (result == 0 && resolver->parent_resolver != 0) {
 		return (konoco_namespace_resolver_get(resolver->parent_resolver, prefix));
 	};
 	
