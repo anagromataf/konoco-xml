@@ -69,6 +69,9 @@ konoco_namespace_resolver_push(void * r)
 void *
 konoco_namespace_resolver_pop(void * r)
 {
+	if (r == 0)
+		return (0);
+	
 	resolver_handle * resolver = (resolver_handle *)r;
 	resolver_handle * parent = resolver->parent_resolver;
 	
@@ -84,6 +87,9 @@ konoco_namespace_resolver_pop(void * r)
 void
 konoco_namespace_resolver_set(void * r, konoco_buffer * prefix, konoco_buffer * ns)
 {
+	if (r == 0)
+		return;
+	
 	resolver_handle * resolver = (resolver_handle *)r;
 	
 	if (resolver->p_list == 0) {
@@ -106,6 +112,9 @@ konoco_namespace_resolver_set(void * r, konoco_buffer * prefix, konoco_buffer * 
 konoco_buffer *
 konoco_namespace_resolver_get(void * r, konoco_buffer * prefix)
 {
+	if (r == 0)
+		return (0);
+	
 	resolver_handle * resolver = (resolver_handle *)r;
 	
 	konoco_buffer * result = 0;

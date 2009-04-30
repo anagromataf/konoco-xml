@@ -28,6 +28,8 @@
 #ifndef _konoco_xml_h_
 #define _konoco_xml_h_
 
+/** The XML version.
+ */
 enum konoco_xml_version {
 	konoco_xml_version_undefined,
 	konoco_xml_version_1_0,

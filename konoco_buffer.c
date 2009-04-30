@@ -25,11 +25,12 @@
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// TODO: Handle the case if no memory could be allocated.
+
 #include "konoco_buffer.h"
 
 #include <stdlib.h>
 #include <string.h>
-
 
 void
 konoco_buffer_init(konoco_buffer * buffer)
@@ -42,15 +43,18 @@ konoco_buffer_init(konoco_buffer * buffer)
 void
 konoco_buffer_free(konoco_buffer * buffer)
 {
-	free(buffer->data);
-	buffer->data = 0;
-	buffer->length = 0;
-	buffer->_size = 0;
+	if (buffer->_size > 0) {
+		free(buffer->data);
+		buffer->data = 0;
+		buffer->length = 0;
+		buffer->_size = 0;
+	};
 }
 
 void
 konoco_buffer_memcpy(konoco_buffer * buffer, const unsigned char * data, int length)
 {
+	// Reallocate the buffer if we need more space.
 	if (length > buffer->_size) {
 		buffer->data = realloc(buffer->data, length);
 		buffer->_size = length;
@@ -69,6 +73,7 @@ konoco_buffer_strcpy(konoco_buffer * buffer, const char * str)
 void
 konoco_buffer_cpy(konoco_buffer * buffer, const konoco_buffer * orig)
 {
+	// Reallocate the buffer if we need more space.
 	if (orig->length > buffer->_size) {
 		buffer->data = realloc(buffer->data, orig->length);
 		buffer->_size = orig->length;

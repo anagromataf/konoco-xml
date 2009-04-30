@@ -28,33 +28,66 @@
 #ifndef _konoco_buffer_h_
 #define _konoco_buffer_h_
 
+
+/**	A konoco_buffer is used to describe a region in memory, which
+ *	begins at 'data' and is 'length' bytes long.
+ *
+ *	The filed '_size' is for internal use. It is set to the amount
+ *	of bytes allocated for this buffer. Don't alter it manually.
+ */
 typedef struct {
 	unsigned char * data;
 	int length;
 	int _size;
 } konoco_buffer;
 
+
+/** This function is used to initialize a konoco_buffer. It only sets all
+ *	the fields 'data', 'length' and '_size' to NULL.
+ */
 void
 konoco_buffer_init(konoco_buffer * buffer);
 
+/** This function frees the memory allocated by copy functions. 
+ *	(If the field '_size' is > 0)
+ */
 void
 konoco_buffer_free(konoco_buffer * buffer);
 
+/** This function copies length bytes from data in the buffer.
+ *	If the buffer is not big enough, it will be reallocated.
+ */
 void
 konoco_buffer_memcpy(konoco_buffer * buffer, const unsigned char * data, int length);
 
+/**	This function copies the NULL terminated string in the buffer without
+ *	the terminating NULL. (It calls konoco_buffer_memcpy)
+ */
 void
 konoco_buffer_strcpy(konoco_buffer * buffer, const char * str);
 
+/** This function copies the content of orig in the buffer.
+ *	If the buffer is not big enough, it will be reallocated.
+ */
 void
 konoco_buffer_cpy(konoco_buffer * buffer, const konoco_buffer * orig);
 
+/** This function copies the content of orig in the un initialized
+ *  buffer. Same as calling konoco_buffer_init and konoco_buffer_cpy.
+ */
 void
 konoco_buffer_init_cpy(konoco_buffer * buffer, const konoco_buffer * orig);
 
+/**	This function comperes buffer a with buffer b. If both buffer are
+ *	equal (length and content), it returns 1 else 0.
+ */
 int
 konoco_buffer_eq(const konoco_buffer * a, const konoco_buffer * b);
 
+/** This function compares the buffer with the NULL terminated
+ *	string (without the NULL). If both are equal (length and content),
+ *	it returns 1 else 0.
+ */
 int
 konoco_buffer_eq_str(const konoco_buffer * buffer, const char * str);
 

@@ -1,6 +1,6 @@
 <?xml version='1.0' charset="UTF-8"?>
 <foo bar="baz" xmlns="http://example.com">
-	<bar/><bar xmlns:a="uri:xyz" baz="123" a:b="123"/>
+	<bar/><bar xmlns:a="uri:xyz" baz="123" a:b="123"></bar>
 	<body>Hello World!</body>
 	<foo xmlns:a="a" a="1"
 		 xmlns:b="b" b= "2"

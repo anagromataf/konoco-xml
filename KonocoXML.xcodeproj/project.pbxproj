@@ -13,7 +13,6 @@
 		F640573D0F8E003300586FB7 /* konoco_sax_lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = F640573B0F8E003300586FB7 /* konoco_sax_lexer.c */; };
 		F640574D0F8E012400586FB7 /* konoco_sax_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = F640574B0F8E012400586FB7 /* konoco_sax_parser.c */; };
 		F640575A0F8E020C00586FB7 /* konoco_sax_delegate.c in Sources */ = {isa = PBXBuildFile; fileRef = F64057580F8E020C00586FB7 /* konoco_sax_delegate.c */; };
-		F640576E0F8E048100586FB7 /* konoco_sax_namespace_handler.h in Headers */ = {isa = PBXBuildFile; fileRef = F640576C0F8E048100586FB7 /* konoco_sax_namespace_handler.h */; };
 		F640576F0F8E048100586FB7 /* konoco_sax_namespace_handler.c in Sources */ = {isa = PBXBuildFile; fileRef = F640576D0F8E048100586FB7 /* konoco_sax_namespace_handler.c */; };
 		F6E265B90F8B53B6008F29B7 /* ResolverTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E265B80F8B53B6008F29B7 /* ResolverTest.m */; };
 		F6E265F10F8B57E3008F29B7 /* konoco_namespace_resolver.c in Sources */ = {isa = PBXBuildFile; fileRef = F6E265EC0F8B57E3008F29B7 /* konoco_namespace_resolver.c */; };
@@ -244,7 +243,6 @@
 				F6E265F40F8B57E3008F29B7 /* konoco_sax.h in Headers */,
 				F6E265F50F8B57E3008F29B7 /* konoco_xml.h in Headers */,
 				F6E2667E0F8B84B1008F29B7 /* konoco_buffer.h in Headers */,
-				F640576E0F8E048100586FB7 /* konoco_sax_namespace_handler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

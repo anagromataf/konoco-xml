@@ -31,15 +31,38 @@
 #include "konoco_xml.h"
 #include "konoco_buffer.h"
 
+/** This function creates a new namesapce resolver and
+ *	sets the given resolver as its parent. If the given
+ *	resolver is NULL, the new resolver is the root.
+ */
 void *
 konoco_namespace_resolver_push(void * resolver);
 
+/** This function destroies the given and retuns
+ *	the parent resover. If the given resolver is
+ *	the root resover, NULL is returned.
+ *
+ *  It is save to call this function with NULL.
+ *	In this case NULL is returned.
+ */
 void *
 konoco_namespace_resolver_pop(void * resolver);
 
+/** This function sets mapping from prefix to namespace in the given 
+ *	resolver. An exsisting mapping with the same prefix is overwritten.
+ *
+ *  It is save to call this function with a NULL as resolver.
+ */
 void
 konoco_namespace_resolver_set(void * resolver, konoco_buffer * prefix, konoco_buffer * ns);
 
+/** This function searches the resolver and its parents for the
+ *	given prefix. If a mapping is found, a pointer to the buffer
+ *	with the namespace is returned.
+ *
+ *	The returned buffer is owned by the namespace resolver and
+ *	can be modified or destroyed by an other function.
+ */
 konoco_buffer *
 konoco_namespace_resolver_get(void * resolver, konoco_buffer * prefix);
 
